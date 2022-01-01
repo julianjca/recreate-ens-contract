@@ -4,6 +4,7 @@ pragma solidity ^0.8.10;
 import "solmate/tokens/ERC721.sol";
 import "solmate/utils/SafeTransferLib.sol";
 import "./Ownable.sol";
+import "./Base64.sol";
 
 error DoesNotExist();
 
@@ -15,14 +16,12 @@ contract ENS is ERC721, Ownable {
 
     mapping(string => address) public ensOwnership;
     mapping(string => address) public resolver;
+    mapping(uint256 => string) public nameById;
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        string memory _baseURI
-    ) payable ERC721(_name, _symbol) {
-        baseURI = _baseURI;
-    }
+    constructor(string memory _name, string memory _symbol)
+        payable
+        ERC721(_name, _symbol)
+    {}
 
     function isAvailable(string memory ensName) public view returns (bool) {
         if (ensOwnership[ensName] == address(0)) {
@@ -35,7 +34,35 @@ contract ENS is ERC721, Ownable {
     function tokenURI(uint256 id) public view override returns (string memory) {
         if (ownerOf[id] == address(0)) revert DoesNotExist();
 
-        return string(abi.encodePacked(baseURI, id));
+        string memory ensName = nameById[id];
+
+        string memory output = string(
+            abi.encodePacked(
+                '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">',
+                ensName,
+                "</text></svg>"
+            )
+        );
+
+        string memory json = Base64.encode(
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name":',
+                        ensName,
+                        '", "description": "ENS is a name service like website domain", "image": "data:image/svg+xml;base64,',
+                        Base64.encode(bytes(output)),
+                        '"}'
+                    )
+                )
+            )
+        );
+
+        output = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
+
+        return output;
     }
 
     function registerName(string memory ensName) external returns (uint256) {
@@ -55,6 +82,8 @@ contract ENS is ERC721, Ownable {
     ) internal virtual returns (uint256) {
         // map ENS name to the message sender
         ensOwnership[ensName] = to;
+
+        nameById[id] = ensName;
 
         _mint(to, id);
     }

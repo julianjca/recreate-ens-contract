@@ -8,16 +8,12 @@ contract ENSTest is DSTest {
     ENS internal token;
 
     function setUp() public {
-        token = new ENS("Ethereum Name Service", "ENS", "ipfs://abc123");
+        token = new ENS("Ethereum Name Service", "ENS");
     }
 
     function testMetadata() public {
         assertEq(token.name(), "Ethereum Name Service");
         assertEq(token.symbol(), "ENS");
-    }
-
-    function testBaseURI() public {
-        assertEq(token.baseURI(), "ipfs://abc123");
     }
 
     function testRegister(string memory ensName) public {
@@ -31,6 +27,8 @@ contract ENSTest is DSTest {
 
         assertEq(tokenOwner, address(this));
         assertEq(addressOwner, address(this));
+
+        string memory result = token.tokenURI(id);
     }
 
     function testCheckAvailability(string memory ensName) public {
