@@ -10,10 +10,10 @@ contract Ownable {
     );
 
     constructor() {
-      _owner = msg.sender;
+        _owner = msg.sender;
     }
 
-    function onwer() external view returns(address) {
+    function onwer() external view returns (address) {
         return _owner;
     }
 
@@ -23,12 +23,10 @@ contract Ownable {
         _owner = _newOwner;
 
         emit OwnershipTransferred(_owner, _newOwner);
-        
     }
 
     function renounceOwnership() public {
         require(msg.sender == _owner, "caller is not owner");
-
 
         _owner = address(0);
     }

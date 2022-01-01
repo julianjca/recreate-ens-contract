@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 import "../Ownable.sol";
 
 contract OwnableTest is DSTest {
-    Ownable token;
+    Ownable internal token;
 
     function setUp() public {
         token = new Ownable();
