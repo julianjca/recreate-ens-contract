@@ -13,6 +13,9 @@ contract ENS is ERC721, Ownable {
 
     string public baseURI;
 
+    mapping(string => address) public ensOwnership;
+    mapping(string => address) public resolver;
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -25,6 +28,42 @@ contract ENS is ERC721, Ownable {
         if (ownerOf[id] == address(0)) revert DoesNotExist();
 
         return string(abi.encodePacked(baseURI, id));
+    }
+
+    function registerName(string memory ensName) external returns (uint256) {
+        require(
+            ensOwnership[ensName] == address(0),
+            "ensName already registered"
+        );
+
+        uint256 id = totalSupply + 1;
+
+        _register(id, msg.sender, ensName);
+
+        return id;
+    }
+
+    function _register(
+        uint256 id,
+        address to,
+        string memory ensName
+    ) internal virtual returns (uint256) {
+        // map ENS name to the message sender
+        ensOwnership[ensName] = to;
+
+        _mint(to, id);
+    }
+
+    function setResolver(string memory ensName, address newResolver)
+        external
+        returns (bool)
+    {
+        require(
+            ensOwnership[ensName] == msg.sender,
+            "you don't own this ensName"
+        );
+
+        resolver[ensName] = newResolver;
     }
 
     function withdraw() external {

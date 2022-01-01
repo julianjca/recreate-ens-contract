@@ -5,25 +5,25 @@ import "ds-test/test.sol";
 import "../Ownable.sol";
 
 contract OwnableTest is DSTest {
-    Ownable internal token;
+    Ownable internal ownable;
 
     function setUp() public {
-        token = new Ownable();
+        ownable = new Ownable();
     }
 
     function testOwnerIsMsgSender() public {
-        assertEq(token.owner(), address(this));
+        assertEq(ownable.owner(), address(this));
     }
 
     function testTransferOwnership() public {
         address newOwner = 0xeb2d7106A5728ACCBdBe380C152e2307a0Cc8FAf;
-        token.transferOwnership(newOwner);
-        assertEq(token.owner(), newOwner);
+        ownable.transferOwnership(newOwner);
+        assertEq(ownable.owner(), newOwner);
     }
 
     function testRenounceOwnership() public {
-        token.renounceOwnership();
+        ownable.renounceOwnership();
 
-        assertEq(token.owner(), address(0));
+        assertEq(ownable.owner(), address(0));
     }
 }
