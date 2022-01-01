@@ -28,7 +28,7 @@ contract ENS is ERC721, Ownable {
     }
 
     function withdraw() external {
-        // if (msg.sender != _owner) revert NotOwner();
+        require(msg.sender == _owner, "Caller is not owner");
 
         SafeTransferLib.safeTransferETH(msg.sender, address(this).balance);
     }

@@ -12,12 +12,18 @@ contract OwnableTest is DSTest {
     }
 
     function testOwnerIsMsgSender() public {
-        assertEq(token.onwer(), address(this));
+        assertEq(token.owner(), address(this));
     }
 
     function testTransferOwnership() public {
         address newOwner = 0xeb2d7106A5728ACCBdBe380C152e2307a0Cc8FAf;
         token.transferOwnership(newOwner);
-        assertEq(token.onwer(), newOwner);
+        assertEq(token.owner(), newOwner);
+    }
+
+    function testRenounceOwnership() public {
+        token.renounceOwnership();
+
+        assertEq(token.owner(), address(0));
     }
 }

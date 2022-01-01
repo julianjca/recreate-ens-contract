@@ -13,7 +13,7 @@ contract Ownable {
         _owner = msg.sender;
     }
 
-    function onwer() external view returns (address) {
+    function owner() external view returns (address) {
         return _owner;
     }
 
