@@ -66,6 +66,14 @@ contract ENS is ERC721, Ownable {
         resolver[ensName] = newResolver;
     }
 
+    function checkOwnerByEnsName(string memory ensName)
+        external
+        view
+        returns (address)
+    {
+        return ensOwnership[ensName];
+    }
+
     function withdraw() external {
         require(msg.sender == _owner, "Caller is not owner");
 

@@ -19,4 +19,19 @@ contract ENSTest is DSTest {
     function testBaseURI() public {
         assertEq(token.baseURI(), "ipfs://abc123");
     }
+
+    function testRegister() public {
+        string memory ensName = "test.eth";
+
+        uint256 id = token.registerName(ensName);
+
+        // check the owner by ENS name
+        address addressOwner = token.checkOwnerByEnsName(ensName);
+
+        // check ownerOf
+        address tokenOwner = token.ownerOf(id);
+
+        assertEq(tokenOwner, address(this));
+        assertEq(addressOwner, address(this));
+    }
 }
