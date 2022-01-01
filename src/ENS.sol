@@ -24,7 +24,7 @@ contract ENS is ERC721, Ownable {
         baseURI = _baseURI;
     }
 
-    function isAvailable(string memory ensName) external view returns (bool) {
+    function isAvailable(string memory ensName) public view returns (bool) {
         if (ensOwnership[ensName] == address(0)) {
             return true;
         }

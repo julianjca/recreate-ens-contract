@@ -20,9 +20,7 @@ contract ENSTest is DSTest {
         assertEq(token.baseURI(), "ipfs://abc123");
     }
 
-    function testRegister() public {
-        string memory ensName = "test.eth";
-
+    function testRegister(string memory ensName) public {
         uint256 id = token.registerName(ensName);
 
         // check the owner by ENS name
@@ -35,11 +33,17 @@ contract ENSTest is DSTest {
         assertEq(addressOwner, address(this));
     }
 
-    function testCheckAvailability() public {
-        string memory ensName = "test2.eth";
-
+    function testCheckAvailability(string memory ensName) public {
         bool isAvailable = token.isAvailable(ensName);
 
         assertTrue(isAvailable);
+    }
+
+    function testCheckAvailabilityAfterMinting(string memory ensName) public {
+        token.registerName(ensName);
+
+        bool isAvailable = token.isAvailable(ensName);
+
+        assertTrue(!isAvailable);
     }
 }

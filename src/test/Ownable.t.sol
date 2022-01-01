@@ -15,8 +15,7 @@ contract OwnableTest is DSTest {
         assertEq(ownable.owner(), address(this));
     }
 
-    function testTransferOwnership() public {
-        address newOwner = 0xeb2d7106A5728ACCBdBe380C152e2307a0Cc8FAf;
+    function testTransferOwnership(address newOwner) public {
         ownable.transferOwnership(newOwner);
         assertEq(ownable.owner(), newOwner);
     }
