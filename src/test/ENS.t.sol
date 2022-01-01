@@ -34,4 +34,12 @@ contract ENSTest is DSTest {
         assertEq(tokenOwner, address(this));
         assertEq(addressOwner, address(this));
     }
+
+    function testCheckAvailability() public {
+        string memory ensName = "test2.eth";
+
+        bool isAvailable = token.isAvailable(ensName);
+
+        assertTrue(isAvailable);
+    }
 }

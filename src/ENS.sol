@@ -24,6 +24,14 @@ contract ENS is ERC721, Ownable {
         baseURI = _baseURI;
     }
 
+    function isAvailable(string memory ensName) external view returns (bool) {
+        if (ensOwnership[ensName] == address(0)) {
+            return true;
+        }
+
+        return false;
+    }
+
     function tokenURI(uint256 id) public view override returns (string memory) {
         if (ownerOf[id] == address(0)) revert DoesNotExist();
 
@@ -31,10 +39,7 @@ contract ENS is ERC721, Ownable {
     }
 
     function registerName(string memory ensName) external returns (uint256) {
-        require(
-            ensOwnership[ensName] == address(0),
-            "ensName already registered"
-        );
+        require(isAvailable(ensName), "ensName already registered");
 
         uint256 id = totalSupply + 1;
 
