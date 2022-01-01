@@ -2,7 +2,7 @@
 pragma solidity ^0.8.10;
 
 import "solmate/tokens/ERC721.sol";
-import "solmate/utils/SafeTransferLib.sol";
+// import "solmate/utils/SafeTransferLib.sol";
 import "./Ownable.sol";
 import "./Base64.sol";
 
@@ -79,7 +79,7 @@ contract ENS is ERC721, Ownable {
         uint256 id,
         address to,
         string memory ensName
-    ) internal virtual returns (uint256) {
+    ) internal virtual {
         // map ENS name to the message sender
         ensOwnership[ensName] = to;
 
@@ -88,10 +88,7 @@ contract ENS is ERC721, Ownable {
         _mint(to, id);
     }
 
-    function setResolver(string memory ensName, address newResolver)
-        external
-        returns (bool)
-    {
+    function setResolver(string memory ensName, address newResolver) external {
         require(
             ensOwnership[ensName] == msg.sender,
             "you don't own this ensName"
@@ -108,11 +105,11 @@ contract ENS is ERC721, Ownable {
         return ensOwnership[ensName];
     }
 
-    function withdraw() external {
-        require(msg.sender == _owner, "Caller is not owner");
+    // function withdraw() external {
+    //     require(msg.sender == _owner, "Caller is not owner");
 
-        SafeTransferLib.safeTransferETH(msg.sender, address(this).balance);
-    }
+    //     SafeTransferLib.safeTransferETH(msg.sender, address(this).balance);
+    // }
 
     function supportsInterface(bytes4 interfaceId)
         public
