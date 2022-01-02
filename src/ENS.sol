@@ -97,6 +97,14 @@ contract ENS is ERC721, Ownable {
         resolver[ensName] = newResolver;
     }
 
+    function getResolver(string memory ensName)
+        external
+        view
+        returns (address)
+    {
+        return resolver[ensName];
+    }
+
     function checkOwnerByEnsName(string memory ensName)
         external
         view
