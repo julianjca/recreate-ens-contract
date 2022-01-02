@@ -44,4 +44,12 @@ contract ENSTest is DSTest {
 
         assertTrue(!isAvailable);
     }
+
+    function testResolver(string memory ensName) public {
+        token.registerName(ensName);
+        token.setResolver(ensName, address(this));
+        address resolver = token.getResolver(ensName);
+
+        assertEq(resolver, address(this));
+    }
 }
