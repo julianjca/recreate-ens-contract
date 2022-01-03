@@ -27,8 +27,6 @@ contract ENSTest is DSTest {
 
         assertEq(tokenOwner, address(this));
         assertEq(addressOwner, address(this));
-
-        string memory result = token.tokenURI(id);
     }
 
     function testCheckAvailability(string memory ensName) public {

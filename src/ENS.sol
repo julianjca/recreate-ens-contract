@@ -9,14 +9,9 @@ import "./Base64.sol";
 error DoesNotExist();
 
 contract ENS is ERC721, Ownable {
-    uint256 public constant TOTAL_SUPPLY = 10_000;
-    uint256 public constant PRICE_PER_MINT = 0.05 ether;
-
-    string public baseURI;
-
-    mapping(string => address) public ensOwnership;
-    mapping(string => address) public resolver;
-    mapping(uint256 => string) public nameById;
+    mapping(string => address) public ensOwnerships;
+    mapping(string => address) public resolvers;
+    mapping(uint256 => string) public ensNames;
 
     constructor(string memory _name, string memory _symbol)
         payable
@@ -24,7 +19,7 @@ contract ENS is ERC721, Ownable {
     {}
 
     function isAvailable(string memory ensName) public view returns (bool) {
-        if (ensOwnership[ensName] == address(0)) {
+        if (ensOwnerships[ensName] == address(0)) {
             return true;
         }
 
@@ -34,7 +29,7 @@ contract ENS is ERC721, Ownable {
     function tokenURI(uint256 id) public view override returns (string memory) {
         if (ownerOf[id] == address(0)) revert DoesNotExist();
 
-        string memory ensName = nameById[id];
+        string memory ensName = ensNames[id];
 
         string memory output = string(
             abi.encodePacked(
@@ -81,20 +76,20 @@ contract ENS is ERC721, Ownable {
         string memory ensName
     ) internal virtual {
         // map ENS name to the message sender
-        ensOwnership[ensName] = to;
+        ensOwnerships[ensName] = to;
 
-        nameById[id] = ensName;
+        ensNames[id] = ensName;
 
         _mint(to, id);
     }
 
     function setResolver(string memory ensName, address newResolver) external {
         require(
-            ensOwnership[ensName] == msg.sender,
+            ensOwnerships[ensName] == msg.sender,
             "you don't own this ensName"
         );
 
-        resolver[ensName] = newResolver;
+        resolvers[ensName] = newResolver;
     }
 
     function getResolver(string memory ensName)
@@ -102,7 +97,7 @@ contract ENS is ERC721, Ownable {
         view
         returns (address)
     {
-        return resolver[ensName];
+        return resolvers[ensName];
     }
 
     function checkOwnerByEnsName(string memory ensName)
@@ -110,7 +105,7 @@ contract ENS is ERC721, Ownable {
         view
         returns (address)
     {
-        return ensOwnership[ensName];
+        return ensOwnerships[ensName];
     }
 
     // function withdraw() external {
