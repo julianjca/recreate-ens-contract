@@ -16,7 +16,48 @@ contract ENSTest is DSTest {
         assertEq(token.symbol(), "ENS");
     }
 
-    function testRegister(string memory ensName) public {
+    // function testRegister(string memory ensName) public {
+    //     uint256 id = token.registerName(ensName);
+
+    //     // check the owner by ENS name
+    //     address addressOwner = token.checkOwnerByEnsName(ensName);
+
+    //     // check ownerOf
+    //     address tokenOwner = token.ownerOf(id);
+
+    //     assertEq(tokenOwner, address(this));
+    //     assertEq(addressOwner, address(this));
+    // }
+
+    function testCheckAvailability() public {
+        string memory ensName = "akak.eth";
+
+        bool isAvailable = token.isAvailable(ensName);
+
+        assertTrue(isAvailable);
+    }
+
+    function testCheckAvailabilityAfterMinting() public {
+        string memory ensName = "test145.eth";
+        token.registerName(ensName);
+
+        bool isAvailable = token.isAvailable(ensName);
+
+        assertTrue(!isAvailable);
+    }
+
+    function testResolver() public {
+        string memory ensName = "test145.eth";
+        token.registerName(ensName);
+        token.setResolver(ensName, address(this));
+        address resolver = token.getResolver(ensName);
+
+        assertEq(resolver, address(this));
+    }
+
+    function testRegisterHasDotEthName() public {
+        string memory ensName = "test145.eth";
+
         uint256 id = token.registerName(ensName);
 
         // check the owner by ENS name
@@ -29,25 +70,22 @@ contract ENSTest is DSTest {
         assertEq(addressOwner, address(this));
     }
 
-    function testCheckAvailability(string memory ensName) public {
-        bool isAvailable = token.isAvailable(ensName);
+    function testRegisterHasNoDotEthName() public {
+        string memory ensName = "test123";
 
-        assertTrue(isAvailable);
-    }
+        uint256 id = token.registerName(ensName);
 
-    function testCheckAvailabilityAfterMinting(string memory ensName) public {
-        token.registerName(ensName);
+        string memory ensNameWithDotEth = string(
+            abi.encodePacked(ensName, ".eth")
+        );
 
-        bool isAvailable = token.isAvailable(ensName);
+        // check the owner by ENS name
+        address addressOwner = token.checkOwnerByEnsName(ensNameWithDotEth);
 
-        assertTrue(!isAvailable);
-    }
+        // check ownerOf
+        address tokenOwner = token.ownerOf(id);
 
-    function testResolver(string memory ensName) public {
-        token.registerName(ensName);
-        token.setResolver(ensName, address(this));
-        address resolver = token.getResolver(ensName);
-
-        assertEq(resolver, address(this));
+        assertEq(tokenOwner, address(this));
+        assertEq(addressOwner, address(this));
     }
 }

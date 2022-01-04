@@ -26,6 +26,32 @@ contract ENS is ERC721, Ownable {
         return false;
     }
 
+    function contains(string memory what, string memory where)
+        internal
+        pure
+        returns (bool)
+    {
+        bytes memory whatBytes = bytes(what);
+        bytes memory whereBytes = bytes(where);
+
+        require(whereBytes.length >= whatBytes.length);
+
+        bool found = false;
+        for (uint256 i = 0; i <= whereBytes.length - whatBytes.length; i++) {
+            bool flag = true;
+            for (uint256 j = 0; j < whatBytes.length; j++)
+                if (whereBytes[i + j] != whatBytes[j]) {
+                    flag = false;
+                    break;
+                }
+            if (flag) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
     function tokenURI(uint256 id) public view override returns (string memory) {
         if (ownerOf[id] == address(0)) revert DoesNotExist();
 
@@ -33,7 +59,7 @@ contract ENS is ERC721, Ownable {
 
         string memory output = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: sans-serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="grad1" /><text x="20" y="330" class="base">',
+                '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: sans-serif; font-size: 16px; }</style><rect width="100%" height="100%" fill="url(#grad1)" /><text x="20" y="330" class="base">',
                 ensName,
                 '</text><linearGradient xmlns="http://www.w3.org/2000/svg" id="grad1" x1="190.5" y1="302" x2="-64" y2="-172.5" gradientUnits="userSpaceOnUse"><stop stop-color="#44BCF0"/><stop offset="0.428185" stop-color="#628BF3"/><stop offset="1" stop-color="#A099FF"/></linearGradient></svg>'
             )
@@ -44,6 +70,7 @@ contract ENS is ERC721, Ownable {
                 string(
                     abi.encodePacked(
                         '{"name":',
+                        '"',
                         ensName,
                         '", "description": "ENS is a name service like website domain", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(output)),
@@ -60,7 +87,19 @@ contract ENS is ERC721, Ownable {
         return output;
     }
 
-    function registerName(string memory ensName) external returns (uint256) {
+    function registerName(string memory nameToRegister)
+        external
+        returns (uint256)
+    {
+        string memory ensName;
+        bool containsDotEth = contains(".eth", nameToRegister);
+
+        if (containsDotEth) {
+            ensName = nameToRegister;
+        } else {
+            ensName = string(abi.encodePacked(nameToRegister, ".eth"));
+        }
+
         require(isAvailable(ensName), "ensName already registered");
 
         uint256 id = totalSupply + 1;
