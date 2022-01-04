@@ -33,9 +33,9 @@ contract ENS is ERC721, Ownable {
 
         string memory output = string(
             abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">',
+                '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: sans-serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="grad1" /><text x="20" y="330" class="base">',
                 ensName,
-                "</text></svg>"
+                '</text><linearGradient xmlns="http://www.w3.org/2000/svg" id="grad1" x1="190.5" y1="302" x2="-64" y2="-172.5" gradientUnits="userSpaceOnUse"><stop stop-color="#44BCF0"/><stop offset="0.428185" stop-color="#628BF3"/><stop offset="1" stop-color="#A099FF"/></linearGradient></svg>'
             )
         );
 
